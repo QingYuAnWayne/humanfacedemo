@@ -1,6 +1,14 @@
 <template>
   <el-container>
     <el-main>
+      <el-popover placement="top-start" width="500" trigger="hover">
+        <div style="float: left;font-size: 20px;font-family: 'Times New Roman'">
+          Step1: Draw a freehand drawing of a human face or select an example on the bottom;<br>
+          Step2: Select Gender, Skin and Hair Color;<br>
+          Step3: Click 'Transform' to get a real face picture.
+        </div>
+        <el-button type="info" slot="reference" style="float: left" plain>Guidance</el-button>
+      </el-popover>
       <p style="font-family: 'Times New Roman';font-size: 35px;font-weight: bold;color: #003E3E" align="center">Sketch to Human Face Demo</p>
         <el-row>
           <div align="center" style="margin-bottom: 50px">
