@@ -51,6 +51,26 @@
                   <el-radio :label="1"><a style="font-size: 20px">Black</a></el-radio>
                 </el-radio-group>
             </div>
+            <br>
+            <div style="font-family: 'Times New Roman';font-size: 20px">
+              <el-popover
+                  :width="600"
+                  trigger="hover"
+                  placement="top-start"
+              >
+                <div style="font-family: 'Times New Roman';font-size: 16px">
+                  The Dilation Value is between 0 and 1.
+                  <br>
+                  The smaller the Dilation Value, the higher the contrast between the hand-drawn drawing and
+                  <br>
+                  the generated drawing;
+                </div>
+                <span class="el-icon-info" slot="reference"></span>
+              </el-popover>
+
+              Dilation Value:
+              <el-input-number size="mini" v-model="dilation" :precision="2" :step="0.1" :max="1"></el-input-number>
+            </div>
 
 
             </div>
@@ -112,6 +132,7 @@ export default {
       gender: 0,
       skin: 0,
       hair: 0,
+      dilation: 0,
     }
   },
   mounted() {
@@ -173,7 +194,10 @@ export default {
       });
       axios.post('http://localhost:8000/transform', {
         input_image: dataURL,
-        reference: this.imageSelected
+        gender: this.gender,
+        skin: this.skin,
+        hairColor: this.hairColor,
+        dilation: this.dilation
       }).then(res=>{
         if(res.data.status === 200)
         {
