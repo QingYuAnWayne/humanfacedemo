@@ -1,22 +1,33 @@
 <template>
   <el-container>
     <el-main>
-      <el-popover placement="top-start" width="500" trigger="hover">
-        <div style="float: left;font-size: 20px;font-family: 'Times New Roman'">
+      <p style="font-family: 'Times New Roman';font-size: 35px;font-weight: bold;color: #003E3E" align="center">Sketch to Human Face Demo</p>
+      <el-dialog
+          :visible.sync="visible"
+          width="60%"
+      >
+        <div style="font-size: 30px;font-family: 'Times New Roman';text-align: left" slot="title">
+          Guidance
+        </div>
+        <div style="font-size: 20px;font-family: 'Times New Roman';text-align: left">
           Step1: Draw a freehand drawing of a human face or select an example on the bottom;<br>
           Step2: Select Gender, Skin and Hair Color;<br>
           Step3: Click 'Transform' to get a real face picture.
         </div>
-        <el-button type="info" slot="reference" style="float: left" plain>Guidance</el-button>
-      </el-popover>
-      <p style="font-family: 'Times New Roman';font-size: 35px;font-weight: bold;color: #003E3E" align="center">Sketch to Human Face Demo</p>
+        <div slot="footer">
+          <el-button type="primary" @click="visible = !visible">
+            OK
+          </el-button>
+        </div>
+      </el-dialog>
         <el-row>
           <div align="center" style="margin-bottom: 50px">
+              <el-button type="info" @click="visible = !visible" plain>Guidance</el-button>
             <el-popover placement="top-start" width="200">
               <el-slider v-model="value2" v-show="isDraw" :min="3" :max="20"></el-slider>
               <div style="font-size: 10px">Brush Size</div>
               <div class="BrushSize" id="BrushSize"></div>
-              <el-button @click="Draw" :type=isDraw slot="reference" style="margin-right: 10px">Draw</el-button>
+              <el-button @click="Draw" :type=isDraw slot="reference" style="margin-right: 10px;margin-left: 10px">Draw</el-button>
             </el-popover>
 
               <el-popover placement="top-start" width="200">
@@ -32,24 +43,29 @@
               <el-button @click="Transfer" type="success" style="margin-top: 10px">Transfer</el-button>
 
             <div style="font-family: 'Times New Roman';font-size: 20px;margin-top: 20px">
-                <a style="font-weight: bold">Gender:</a>
-                <el-radio-group v-model="gender" style="margin-right: 20px">
-                  <el-radio :label="0"><a style="font-size: 20px">Female</a></el-radio>
-                  <el-radio :label="1"><a style="font-size: 20px">Male</a></el-radio>
-                </el-radio-group>
-
-                <a style="font-weight: bold">Skin:</a>
-                <el-radio-group v-model="skin" style="margin-right: 20px">
-                  <el-radio :label="0"><a style="font-size: 20px">Not Brighter</a></el-radio>
-                  <el-radio :label="1"><a style="font-size: 20px">Brighter</a></el-radio>
-                </el-radio-group>
-
-
-                <a style="font-weight: bold">Hair Color:</a>
-                <el-radio-group v-model="hair">
-                  <el-radio :label="0"><a style="font-size: 20px">Not Black</a></el-radio>
-                  <el-radio :label="1"><a style="font-size: 20px">Black</a></el-radio>
-                </el-radio-group>
+              <el-row :gutter="24">
+                <el-col :span="8" style="text-align: center">
+                  <a style="font-weight: bold">Gender:</a>
+                  <el-radio-group v-model="gender" style="margin-right: 20px;margin-left: 10px">
+                    <el-radio :label="0"><a style="font-size: 20px">Female</a></el-radio>
+                    <el-radio :label="1"><a style="font-size: 20px">Male</a></el-radio>
+                  </el-radio-group>
+                </el-col>
+                <el-col :span="8">
+                  <a style="font-weight: bold;margin-left: 20px">Skin Tone:</a>
+                  <el-radio-group v-model="skin" style="margin-right: 20px;margin-left: 10px">
+                    <el-radio :label="0"><a style="font-size: 20px">Darker</a></el-radio>
+                    <el-radio :label="1"><a style="font-size: 20px">Brighter</a></el-radio>
+                  </el-radio-group>
+                </el-col>
+                <el-col :span="8">
+                  <a style="font-weight: bold;margin-left: 20px">Hair Color:</a>
+                  <el-radio-group v-model="hair" style="margin-left: 10px">
+                    <el-radio :label="0"><a style="font-size: 20px">None Black</a></el-radio>
+                    <el-radio :label="1"><a style="font-size: 20px">Black</a></el-radio>
+                  </el-radio-group>
+                </el-col>
+              </el-row>
             </div>
             <br>
             <div style="font-family: 'Times New Roman';font-size: 20px">
@@ -133,6 +149,7 @@ export default {
       skin: 0,
       hair: 0,
       dilation: 0,
+      visible: true
     }
   },
   mounted() {
@@ -181,28 +198,25 @@ export default {
     Del() {
       this.canvas.clear()
       this.$refs.select.removeFromSingleSelected()
-      // this.$refs.select.$emit("removeFromSingleSelected")
-
     },
     Transfer(){
-      const dataURL = this.canvas.toDataURL({
+      var dataURL = this.canvas.toDataURL({
         width: this.canvas.width,
         height: this.canvas.height,
         left: 0,
         top: 0,
         format: 'png',
       });
-      axios.post('http://localhost:8000/transform', {
-        input_image: dataURL,
-        gender: this.gender,
-        skin: this.skin,
-        hairColor: this.hairColor,
-        dilation: this.dilation
+      dataURL = dataURL.split(',')[1]
+      axios.post('/api/generate', {
+        sketch: dataURL,
+        attributes: [this.skin, this.hair, this.gender],
+        dilation_value: this.dilation
       }).then(res=>{
-        if(res.data.status === 200)
+        if(res.data.code === '200')
         {
-          this.image = res.data.output_image
-          this.image = this.image.substring(2, this.image.length - 1)
+          this.image = res.data.result
+          console.log(this.image)
           this.isShow = true
         }
         else
