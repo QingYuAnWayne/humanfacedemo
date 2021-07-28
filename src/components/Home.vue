@@ -216,7 +216,6 @@ export default {
         if(res.data.code === '200')
         {
           this.image = res.data.result
-          console.log(this.image)
           this.isShow = true
         }
         else
@@ -260,6 +259,7 @@ export default {
         scaleX:512/400,
         scaleY:512/400
       })
+      this.Del()
       this.canvas.centerObject(image)
       this.canvas.add(image)
       this.canvas.renderAll()
