@@ -10,9 +10,9 @@
           Guidance
         </div>
         <div style="font-size: 20px;font-family: 'Times New Roman';text-align: left">
-          Step1: Draw a freehand drawing of a human face or select an example on the bottom;<br>
-          Step2: Select Gender, Skin and Hair Color;<br>
-          Step3: Click 'Transform' to get a real face picture.
+          <a style="font-weight: bold">Step1:</a> Draw a freehand drawing of a human face or select an example on the bottom;<br>
+          <a style="font-weight: bold">Step2:</a> Select Gender, Skin and Hair Color;<br>
+          <a style="font-weight: bold">Step3:</a> Click 'Transform' to get a real face picture.
         </div>
         <div slot="footer">
           <el-button type="primary" @click="visible = !visible">
@@ -40,7 +40,7 @@
               <el-button @click="Del">Clear</el-button>
               <el-button @click="redoDraw">Redo</el-button>
               <el-button @click="undoDraw">Undo</el-button>
-              <el-button @click="Transfer" type="success" style="margin-top: 10px">Transfer</el-button>
+              <el-button @click="Transfer" type="success" style="margin-top: 10px">Transform</el-button>
 
             <div style="font-family: 'Times New Roman';font-size: 20px;margin-top: 20px">
               <el-row :gutter="24">
@@ -107,7 +107,6 @@
       <div>
         <div style="font-size: 30px;font-family: 'Times New Roman'">
           <div style="text-align: left">Select Examples
-            <el-button round type="primary" size="mini" style="float: right" @click="getExample"><i class="el-icon-refresh"></i>More</el-button>
           </div>
         </div>
         <br>
@@ -160,17 +159,7 @@ export default {
         this.log = [];
       }
     });
-    this.examples = []
-    var url = this.publicPath + 'sketch/'
-    for(var i = 0; i<5;i++)
-    {
-      var num = [1, 1, 1, 1, 1];
-      this.examples.push(
-          {
-            id: i,
-            src: url+num[i].toString()+'.png'
-          })
-    }
+    this.getExample()
   },
   watch:{
     value1: function(){
@@ -207,10 +196,11 @@ export default {
         top: 0,
         format: 'png',
       });
+      console.log(dataURL)
       dataURL = dataURL.split(',')[1]
       axios.post('/api/generate', {
         sketch: dataURL,
-        attributes: [this.skin, this.hair, this.gender],
+        attributes: [this.gender, this.hair, this.skin],
         dilation_value: this.dilation
       }).then(res=>{
         if(res.data.code === '200')
@@ -256,8 +246,8 @@ export default {
       imgObj.src = data.src
       var image = new fabric.Image(imgObj)
       image.set({
-        scaleX:512/400,
-        scaleY:512/400
+        scaleX:512/512,
+        scaleY:512/512
       })
       this.Del()
       this.canvas.centerObject(image)
@@ -267,13 +257,12 @@ export default {
     getExample(){
       this.examples = []
       var url = this.publicPath + 'sketch/'
-      for(var i = 0; i<5;i++)
+      for(var i = 1; i<11;i++)
       {
-        var num = Math.round(Math.random() * 665);
         this.examples.push(
             {
               id: i,
-              src: url+num.toString()+'.png'
+              src: url+i.toString()+'.jpg'
             })
       }
     },
