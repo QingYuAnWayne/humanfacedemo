@@ -12,7 +12,7 @@
         <div style="font-size: 20px;font-family: 'Times New Roman';text-align: left">
           <a style="font-weight: bold">Step1:</a> Draw a freehand drawing of a human face or select an example on the bottom;<br>
           <a style="font-weight: bold">Step2:</a> Select Gender, Skin and Hair Color;<br>
-          <a style="font-weight: bold">Step3:</a> Click 'Transform' to get a real face picture.
+          <a style="font-weight: bold">Step3:</a> Click 'Transfer' to get a real face picture.
         </div>
         <div slot="footer">
           <el-button type="primary" @click="visible = !visible">
@@ -40,7 +40,7 @@
               <el-button @click="Del">Clear</el-button>
               <el-button @click="redoDraw">Redo</el-button>
               <el-button @click="undoDraw">Undo</el-button>
-              <el-button @click="Transfer" type="success" style="margin-top: 10px">Transform</el-button>
+              <el-button @click="Transfer" type="success" style="margin-top: 10px">Transfer</el-button>
 
             <div style="font-family: 'Times New Roman';font-size: 20px;margin-top: 20px">
               <el-row :gutter="24">
