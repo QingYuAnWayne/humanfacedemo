@@ -41,6 +41,7 @@
               <el-button @click="redoDraw">Redo</el-button>
               <el-button @click="undoDraw">Undo</el-button>
               <el-button @click="Transfer" type="success" style="margin-top: 10px">Transfer</el-button>
+              <el-button @click="Save" :disabled="!isShow">Save</el-button>
 
             <div style="font-family: 'Times New Roman';font-size: 20px;margin-top: 20px">
               <el-row :gutter="24">
@@ -266,6 +267,14 @@ export default {
             })
       }
     },
+    Save(){
+      const link = document.createElement('a');
+      link.download = 'canvas.png';
+      link.href = this.image;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   }
 }
 </script>
